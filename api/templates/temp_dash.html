@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://unpkg.com/three@0.139.2/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+        background-color: #070707;
+    }
+
+    canvas {
+        display: block;
+        position: absolute;
+        top: 0;
+    }
+
+    #canvas_container {
+        width: 100%;
+        height: 100vh;
+    }
+
+    button {
+        position: absolute;
+        bottom: 5%;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.9em;
+        background: #000000;
+        color: white;
+        cursor: pointer;
+        transition: all .3s;
+    }
+
+    #toggleLeft, #toggleRight {
+        font-size: 1.5rem;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    #toggleLeft {
+        left: 10px;
+    }
+
+    #toggleRight {
+        right: 10px;
+    }
+
+    #toggleLeft i,
+    #toggleRight i {
+        color: white;
+    }
+
+    button:hover {
+        background: #ffffff;
+        color: #000000;
+    }
+    #canvasWrapper {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media screen and (max-width: 600px) {
+        canvas {
+            width: 100%;
+            height: 100vh;
+            display: block;
+        }
+    }
+
+    .navbar {
+      height: 60px;
+      background-color: #1E1E1E;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      position: sticky;
+      z-index: 100;
+    }
+
+    .navbar-brand {
+      font-size: 1.4em;
+      margin-right: auto;
+    }
+
+    .navbar-toggle {
+      padding: 7px 10px;
+      cursor: pointer;
+    }
+
+    .profile-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #FFFFFF;
+      margin-left: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+    }
+
+    .profile-options {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background-color: #1E1E1E;
+      border-radius: 5px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      display: none;
+      color: #FFFFFF;
+    }
+
+    .profile-options a {
+      display: block;
+      padding: 10px;
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+
+    .blog-slider {
+        /* width: 95%; */
+        max-width: 800px;
+        background: rgba(255, 255, 255, 0.264); /* Semi-transparent white background */
+        box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+        padding: 25px;
+        border-radius: 25px;
+        transition: all .3s;
+        margin-top: 20px;
+    }
+
+    .blog-slider__item {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .blog-slider__img {
+        min-width: 300px;
+        width: 50%;
+        height: 100%;
+    }
+
+    img {
+        width: 100%;
+        object-fit: cover;
+        display: block;
+        opacity: 1;
+        border-radius: 20px;
+        transition: all .3s;
+    }
+
+    .blog-slider__content {
+        padding: 0 15px;
+    }
+
+    .blog-slider__content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 50%;
+        min-width: 300px;
+    }
+
+    .blog-slider__code {
+        color: #a6a3c2;
+        margin-bottom: 10px;
+        display: block;
+        font-weight: 500;
+    }
+
+    .blog-slider__title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff; /* White text color */
+        margin-bottom: 15px;
+    }
+
+    .blog-slider__text {
+        color: #fff; /* White text color */
+        margin-bottom: 20px;
+        line-height: 1.5em;
+    }
+    
+    #posterDiv {
+    pointer-events: none;
+    display: none;
+    position: absolute;
+    top: 60px;
+    opacity: 0;  /* Initial opacity is set to 0 */
+    animation: fadeIn 1s ease-in-out forwards;  /* Animation name, duration, timing function, and fill mode */
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;  /* Starting opacity */
+        }
+        to {
+            opacity: 1;  /* Ending opacity */
+        }
+    }
+
+    .blog-slider__button {
+        display: inline-flex;
+        background-image: linear-gradient(147deg, #fe8a39 0%, #fd3838 74%);
+        padding: 15px 35px;
+        border-radius: 50px;
+        color: #fff;
+        box-shadow: 0px 14px 80px rgba(252, 56, 56, 0.4);
+        text-decoration: none;
+        font-weight: 500;
+        justify-content: center;
+        text-align: center;
+        letter-spacing: 1px;
+        pointer-events: painted;
+    }
+    
+    .globe-label {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    display: none;
+    }
+
+</style>
+
+<body>
+
+    <div class="navbar">
+        <div class="navbar-brand">Logo</div>
+        <div class="navbar-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+        <div class="profile-circle" onclick="toggleProfileOptions()">
+          <i class="fas fa-user"></i>
+          <div class="profile-options" id="profileOptions">
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="#">Logout</a>
+          </div>
+        </div>
+    </div>
+
+    <div id="canvasWrapper">
+        
+        <div id="canvas_container"></div>
+        <button id="toggleLeft" onclick="toggleTextures(-1)"><i class="fa fa-chevron-left"></i></button>
+        <button id="toggleRight" onclick="toggleTextures(1)"><i class="fa fa-chevron-right"></i></button>
+        <div class="globe-label" id="globeLabel1" style="display: block;">Event 1</div>
+        <div class="globe-label" id="globeLabel2">Event 2</div>
+        <div class="globe-label" id="globeLabel3">Event 3</div>
+        <div id="posterDiv" style="display: none; position: absolute;">
+            <div class="blog-slider">
+
+                <div class="blog-slider__item swiper-slide">
+                    <div class="blog-slider__img">
+                        <img src="https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1535759872/kuldar-kalvik-799168-unsplash.webp"
+                            alt="">
+                    </div>
+                    <div class="blog-slider__content">
+                        <span class="blog-slider__code">26 December 2019</span>
+                        <div class="blog-slider__title">Lorem Ipsum Dolor</div>
+                        <div class="blog-slider__text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae
+                            voluptate repellendus magni illo ea animi?</div>
+                        <a href="#" class="blog-slider__button">READ MORE</a>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let renderer, scene, camera, sphereBg, stars, controls, container = document.getElementById("canvas_container");
+        let timeout_Debounce;
+        let cameraSpeed = 0;
+        let blobScale = 0;
+        let p = 0;
+        let posterDivVisible = false; // Variable to track visibility
+
+        let globeNames = ["Globe 1", "Globe 2"];
+
+
+        let posters = [
+            "https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1535759872/kuldar-kalvik-799168-unsplash.webp",
+            "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            // Add more poster URLs as needed
+        ];
+
+        let postTitles = [
+            "Lorem Ipsum Dolor",
+            "gsjhhj sfhfhh"
+            // Add more titles as needed
+        ];
+
+        let postDates = [
+            "26 December 2019",
+            "26 December 2019"
+
+            // Add more dates as needed
+        ];
+
+        let postContents = [
+            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae voluptate repellendus magni illo ea animi?",
+            'jgsd jkshfahkf jdsfhkurwiefwfs'
+        ];
+
+        let postLinks = [
+            "#",
+            '#'
+            // Add more links as needed
+        ];
+
+        const loader = new THREE.TextureLoader();
+
+        let textureSphereBg = [];
+        textureSphereBg.push(loader.load('https://i.ibb.co/4gHcRZD/bg3-je3ddz.jpg'));
+        textureSphereBg.push(loader.load('https://i.ibb.co/hcN2qXk/star-nc8wkw.jpg'));
+
+        let textureStar = [];
+        textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
+        textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
+
+        let texture1 = [];
+        texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
+        texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
+
+        let texture2 = [];
+        texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
+        texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
+
+        let texture4 = [];
+        texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
+        texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 1000);
+            camera.position.set(0, 0, 400);
+
+            let ambientLight = new THREE.AmbientLight("#ffffff", 1);
+            ambientLight.position.set(0, 20, 20);
+            scene.add(ambientLight);
+
+            // // Add directional light from behind the globe
+            // let directionalLight = new THREE.DirectionalLight("#ffffff", 100);
+            // directionalLight.position.set(0, 0, -1); // Behind the globe
+            // scene.add(directionalLight);
+
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // controls = new THREE.OrbitControls(camera, renderer.domElement);
+            // controls.autoRotate = true;
+            // controls.autoRotateSpeed = 4;
+            // controls.minDistance = 150;
+            // controls.enablePan = false;
+
+            // // Adjust maxDistance based on the device type
+            // if (isMobile()) {
+            //     controls.maxDistance = 700;
+            //     // controls.autoRotate = false; // Disable auto-rotation on mobile
+            // } else {
+            //     controls.maxDistance = 400;
+            // }
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 4;
+            controls.minDistance = 150;
+            controls.enablePan = false;
+
+            // Adjust maxDistance based on the device type
+            if (isMobile()) {
+                controls.maxDistance = 700;
+            } else {
+                controls.maxDistance = 400;
+            }
+
+            // Set maxPolarAngle to allow interaction with the globe even when zoomed in
+            controls.maxPolarAngle = Math.PI / 2 - 0.1; // Set an angle slightly less than 90 degrees
+
+
+            createSphereWithTexture(textureSphereBg[p]);
+
+            let starsGeometry = new THREE.BufferGeometry();
+
+            for (let i = 0; i < 50; i++) {
+                let particleStar = randomPointSphere(150);
+
+                particleStar.velocity = THREE.MathUtils.randInt(50, 200);
+
+                particleStar.startX = particleStar.x;
+                particleStar.startY = particleStar.y;
+                particleStar.startZ = particleStar.z;
+
+                starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute([
+                    particleStar.x, particleStar.y, particleStar.z
+                ], 3));
+            }
+
+            let starsMaterial = new THREE.PointsMaterial({
+                size: 5,
+                color: "#ffffff",
+                transparent: true,
+                opacity: 0.5,
+                alphaTest: 0.5,
+                map: textureStar[p],
+                blending: THREE.AdditiveBlending,
+            });
+
+            stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+
+            scene.add(createStars(texture1[p], 17, 10));
+            scene.add(createStars(texture2[p], 5, 7));
+            scene.add(createStars(texture4[p], 17, 13));
+        }
+
+        function createSphereWithTexture(texture) {
+            let geometrySphereBg = new THREE.SphereBufferGeometry(150, 40, 40);
+            let materialSphereBg = new THREE.MeshBasicMaterial({
+                side: THREE.BackSide,
+                map: texture,
+            });
+            sphereBg = new THREE.Mesh(geometrySphereBg, materialSphereBg);
+            scene.add(sphereBg);
+        }
+
+        function createStars(texture, size, total) {
+            let pointGeometry = new THREE.BufferGeometry();
+            let pointMaterial = new THREE.PointsMaterial({
+                size: size,
+                map: texture,
+                blending: THREE.AdditiveBlending,
+            });
+
+            let positions = [];
+            for (let i = 0; i < total; i++) {
+                let radius = THREE.MathUtils.randInt(149, 70);
+                let particles = randomPointSphere(radius);
+                positions.push(particles.x, particles.y, particles.z);
+            }
+
+            pointGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+            return new THREE.Points(pointGeometry, pointMaterial);
+        }
+
+        function toggleTextures(direction) {
+
+            scene.children.forEach((child) => {
+                if (child instanceof THREE.Mesh || child instanceof THREE.Points) {
+                    scene.remove(child);
+                }
+            });
+
+            p += direction;
+
+            if (p < 0) {
+                p = textureSphereBg.length - 1;
+            } else if (p >= textureSphereBg.length) {
+                p = 0;
+            }
+
+            createSphereWithTexture(textureSphereBg[p]);
+            for (let i = 1; i <= textureSphereBg.length; i++) {
+                const label = document.getElementById(`globeLabel${i}`);
+                if (i === p + 1) {
+                    label.style.display = 'block';
+                } else {
+                    label.style.display = 'none';
+                }
+            }
+
+            // Reset the rotation of the globes
+            sphereBg.rotation.set(0, 0, 0);
+            stars.rotation.set(0, 0, 0);
+
+            camera.position.set(0, 0, 400);
+            controls.target.set(0, 0, 0);
+
+            let starsGeometry = new THREE.BufferGeometry();
+
+            for (let i = 0; i < 50; i++) {
+                let particleStar = randomPointSphere(150);
+
+                particleStar.velocity = THREE.MathUtils.randInt(50, 200);
+
+                particleStar.startX = particleStar.x;
+                particleStar.startY = particleStar.y;
+                particleStar.startZ = particleStar.z;
+
+                starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute([
+                    particleStar.x, particleStar.y, particleStar.z
+                ], 3));
+            }
+
+            let starsMaterial = new THREE.PointsMaterial({
+                size: 5,
+                color: "#ffffff",
+                transparent: true,
+                opacity: 0.5,
+                alphaTest: 0.5,
+                map: textureStar[p],
+                blending: THREE.AdditiveBlending,
+            });
+
+            stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+
+            scene.add(createStars(texture1[p], 17, 10));
+            scene.add(createStars(texture2[p], 5, 7));
+            scene.add(createStars(texture4[p], 17, 13));
+
+            // Update content based on the current index p
+            document.querySelector('.blog-slider__img img').src = posters[p];
+            document.querySelector('.blog-slider__title').innerText = postTitles[p];
+            document.querySelector('.blog-slider__code').innerText = postDates[p];
+            document.querySelector('.blog-slider__text').innerText = postContents[p];
+            document.querySelector('.blog-slider__button').href = postLinks[p];
+
+        }
+
+
+        function animate() {
+            stars.geometry.attributes.position.needsUpdate = true;
+            sphereBg.rotation.x += 0.002;
+            sphereBg.rotation.y += 0.002;
+            sphereBg.rotation.z += 0.002;
+
+            // Check camera distance and make the div visible accordingly
+            const distance = camera.position.distanceTo(sphereBg.position);
+            const newVisibility = distance < 200;
+
+            if (newVisibility !== posterDivVisible) {
+                posterDivVisible = newVisibility;
+                const posterDiv = document.getElementById('posterDiv');
+                posterDiv.style.display = posterDivVisible ? 'block' : 'none';
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        function randomPointSphere(radius) {
+            let theta = 2 * Math.PI * Math.random();
+            let phi = Math.acos(2 * Math.random() - 1);
+            let dx = 0 + (radius * Math.sin(phi) * Math.cos(theta));
+            let dy = 0 + (radius * Math.sin(phi) * Math.sin(theta));
+            let dz = 0 + (radius * Math.cos(phi));
+            return new THREE.Vector3(dx, dy, dz);
+        }
+
+        function onWindowResize() {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        window.addEventListener("resize", () => {
+            clearTimeout(timeout_Debounce);
+            timeout_Debounce = setTimeout(onWindowResize, 80);
+        });
+
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        function toggleProfileOptions() {
+            var profileOptions = document.getElementById('profileOptions');
+            profileOptions.style.display = (profileOptions.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function createGlobeLabel(name) {
+            const label = document.createElement('div');
+            label.className = 'globe-label';
+            label.textContent = name;
+            document.body.appendChild(label);
+            return label;
+        }
+
+        function updateGlobeLabels() {
+            const labels = document.querySelectorAll('.globe-label');
+            labels.forEach((label, index) => {
+                if (index === p) {
+                    label.style.display = 'block';
+                } else {
+                    label.style.display = 'none';
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

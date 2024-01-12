@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/houdiniheist.css') }}">
+    <script src="https://codepen.io/Tibixx/pen/rRBKBm.js"></script>
+    <script src="https://codepen.io/DonKarlssonSan/pen/jBWaad.js"></script>
+    <title>Houdini Heist</title>
+</head>
+
+<body>
+    <div class="background">
+        <canvas id="flowfield" class="flowfield" width="400" height="400"></canvas>
+        <div class="login-wrap">
+            <div class="login-html">
+                <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1"
+                    class="tab">Register</label>
+                <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab"
+                    style="display: none;"><a href="{{ url_for('register') }}">Sign Up</a></label>
+                <div class="login-form">
+                    <form method="POST" id="regForm" action="{{ url_for('register_event', event='houdiniheist') }}">
+                        <div class="sign-in-htm">
+                            <div class="col-sm-6 group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control input" name="Name" id="name"
+                                    placeholder="Enter your name." required>
+                            </div>
+                            <div class="col-sm-6 group">
+                                <label for="college">College</label>
+                                <input type="text" class="form-control input" name="College" id="College"
+                                    placeholder="Enter your College Name." required>
+                            </div>
+
+                            <div class="col-sm-4 group">
+                                <label for="dept">Department</label>
+                                <select name="Department" class="form-control input browser-default custom-select"
+                                    required>
+                                    <option value="" disabled selected>Select the department</option>
+                                    <option name="Department" id="department" class="form-control input"
+                                        data-department="CSEAIML" value="CSEAIML">CSE (AI&ML)</option>
+                                    <option name="Department" id="department" class="form-control input"
+                                        data-department="MECH" value="MECH">Mechanical Engineering</option>
+                                    <option name="Department" id="department" class="form-control input"
+                                        data-department="CIVIL" value="CIVIL">Civil Engineering</option>
+                                    <option name="Department" id="department" class="form-control input"
+                                        data-department="ENTC" value="ENTC">Electronics and Telecommunication
+                                        Engineering</option>
+                                    <option name="Department" id="department" class="form-control input"
+                                        data-department="CE" value="CE">Computer Engineering</option>
+                                    <option name="Department" id="department" class="form-control input"
+                                        data-department="IT" value="IT">Information Technology</option>
+                                    <option name="Department" id="department" class="form-control input"
+                                        data-department="OTHERS" value="OTHERS">Others</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2 group">
+                                <label for="year">Year</label>
+                                <select name="Year" class="form-control input browser-default custom-select" required>
+                                    <option value="" disabled selected>Select the year</option>
+                                    <option name="Year" id="year" class="form-control input" data-year="1" value="1">1st
+                                        Year
+                                    </option>
+                                    <option name="Year" id="year" class="form-control input" data-year="2" value="2">2nd
+                                        Year
+                                    </option>
+                                    <option name="Year" id="year" class="form-control input" data-year="3" value="3">3rd
+                                        Year
+                                    </option>
+                                    <option name="Year" id="year" class="form-control input" data-year="4" value="4">4th
+                                        Year
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 group">
+                                <label for="gender">Gender</label>
+                                <select name="Gender" id="sex" class="form-control input browser-default custom-select"
+                                    required>
+                                    <option value="" disabled selected>Select the gender</option>
+                                    <option name="Gender" id="sex" class="form-control input" value="male">Male</option>
+                                    <option name="Gender" id="sex" class="form-control input" value="female">Female
+                                    </option>
+                                    <option name="Gender" id="sex" class="form-control input" value="other">Other
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control input" name="Email" id="email"
+                                    placeholder="Enter your email." required>
+                            </div>
+
+                            <div class="col-sm-6 group">
+                                <label for="tel">Phone</label>
+                                <input type="number" name="Contact" class="form-control input" id="tel"
+                                    placeholder="Enter Your Contact Number." required>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <input type="checkbox" name="Rules" class="form-check d-inline" id="chb" required><label
+                                    for="chb" class="form-check-label">&nbsp;I read all rules and instructions.
+                                </label>
+                            </div>
+                            <input type="hidden" name="event" value="houdiniheist">
+                            <div class="group">
+                                <button type="submit" class="button">Register</button>
+                            </div>
+
+                        </div>
+                        {% if messages %}
+                        <div class="alert alert-{{ messages[0].category }} alert-dismissible fade show" role="alert">
+                            {{ messages}}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/houdiniheist.js') }}"></script>
+</body>
+
+</html>

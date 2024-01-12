@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .card-header {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .card {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .lead {
+            margin-bottom: 20px;
+        }
+
+        .btn-logout {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+
+        .btn-event {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2>Dashboard</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">Hello, {{ user.name }}!</p>
+                        <p>This is your dashboard. You have registered for the following events:</p>
+                        <ul>
+                            {% for event in user.events %}
+                            <li>{{ event }}</li>
+                            {% endfor %}
+                        </ul>
+                        <a href="{{ url_for('logout') }}" class="btn btn-logout btn-block">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-center">
+      
+              {% if 'houdiniheist' not in user.events %}
+                  <a href="{{ url_for('register_event', event='houdiniheist') }}" class="btn btn-primary btn-event">Register for Houdini Heist</a>
+              {% else %}
+                  <button class="btn btn-primary btn-event" disabled>Already Registered for Houdini Heist</button>
+              {% endif %}
+          </div>
+      </div>
+    </div>
+</body>
+
+</html>

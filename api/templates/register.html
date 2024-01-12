@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/sweetalert.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='lib/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/sweetalert.min.js') }}"></script>
+    
+    <style>
+        
+#space, .stars {
+  overflow: hidden;
+  position: absolute;
+  top: 0;  
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.stars {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: zoom 5s infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stars:nth-child(1) {
+  background-position: 50% 50%;
+  animation-delay: 0s;
+}
+.stars:nth-child(2) {
+  background-position: 20% 60%;
+  animation-delay: 1s;
+}
+.stars:nth-child(3) {
+  background-position: -20% -30%;
+  animation-delay: 2s;
+}
+.stars:nth-child(4) {
+  background-position: 40% -80%;
+  animation-delay: 3s;
+}
+.stars:nth-child(5) {
+  background-position: -20% 30%;
+  animation-delay: 4s;
+}
+
+@keyframes zoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+    animation-timing-function: ease-in;
+  } 
+  85% {
+    opacity: 1;
+    transform: scale(2.8);
+    animation-timing-function: linear;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3.5);
+  }
+}
+
+    </style>
+</head>
+
+<body>
+    <div id="space">
+    <div class="login-wrap">
+        <div class="login-html">
+            <input id="tab-1" type="radio" name="tab" class="sign-in"><label for="tab-1" class="tab"><a
+                    href="{{ url_for('login') }}">Sign In</a></label>
+            <input id="tab-2" type="radio" name="tab" class="sign-up" checked><label for="tab-2" class="tab">Sign
+                Up</label>
+            <div class="login-form">
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="sign-up-htm">
+                        <div class="group">
+                            <label for="name" class="label">Name</label>
+                            <input id="name" type="text" class="input form-control" name="name" required>
+                        </div>
+                        <div class="group">
+                            <label for="college" class="label">College</label>
+                            <input id="college" type="text" class="input form-control" name="college" required>
+                        </div>
+                        <div class="group">
+                            <label for="email" class="label">Email Address</label>
+                            <input id="email" type="email" class="input form-control" name="email" required>
+                        </div>
+                        <div class="group">
+                            <label for="password" class="label">Password</label>
+                            <input id="password" type="password" class="input form-control" data-type="password"
+                                name="password" required>
+                        </div>
+                        <div class="group">
+                            <button type="submit" class="button">Sign Up</button>
+                        </div>
+                    </div>
+                </form>
+              
+            </div>
+            {% if message %}
+            <div class="message" data-type="{{ message_type }}" style="display: none;">{{ message }}</div>
+            {% endif %}
+            <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            if (document.querySelector('.message')) {
+                var messageType = document.querySelector('.message').getAttribute('data-type');
+                var messageText = document.querySelector('.message').textContent;
+
+                if (messageType === 'success') {
+                    swal("Success", messageText, "success");
+                } else if (messageType === 'warning') {
+                    swal("Error", messageText, "warning");
+                } else if (messageType === 'error') {
+                    swal("Error", messageText, "error");
+                }
+            }
+        });
+            </script>
+        </div>
+    </div>
+    <div class="stars"></div>
+    <div class="stars"></div>
+    <div class="stars"></div>
+    <div class="stars"></div>
+    <div class="stars"></div>
+    </div>
+</body>
+
+</html>

@@ -1,5 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
+import datetime
+import os
+from flask import Flask, jsonify, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from github import Github
 from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo import MongoClient
 from flask_mail import Mail, Message
@@ -7,6 +10,8 @@ from bson import ObjectId
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+
 app.config['MONGO_URI'] = 'mongodb://parthhalwane:artimas2024pccoe@ac-yjnwgro-shard-00-00.ewdp2pv.mongodb.net:27017,ac-yjnwgro-shard-00-01.ewdp2pv.mongodb.net:27017,ac-yjnwgro-shard-00-02.ewdp2pv.mongodb.net:27017/?replicaSet=atlas-1276tn-shard-0&ssl=true&authSource=admin'
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -51,7 +56,7 @@ def register_user(name, email, password, verification_token):
     }
     user_id = db.users.insert_one(new_user).inserted_id
 
-    verification_link = f'http://localhost:5000/verify/{verification_token}'
+    verification_link = f'https://localhost:5000/verify/{verification_token}'
     subject = 'Email Verification for Registration'
     body = render_template('email_verification.html', user=new_user, verification_link=verification_link)
     send_email(subject, new_user['email'],body)
@@ -68,7 +73,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('login.html',messages='')
+    return render_template('index.html',messages='')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -141,9 +146,9 @@ def verify_email(token):
     return redirect(url_for('index'))
 
 @app.route('/dashboard')
-@login_required
+# @login_required
 def dashboard():
-    print(current_user.events)
+    # print(current_user.events)
     return render_template('dashboard.html', user=current_user)
 
 @app.route('/logout')
@@ -166,19 +171,51 @@ def generate_verification_token():
 
 @app.route('/houdiniheist')
 def houdini_heist():
-    return render_template('houdiniheist.html')
+    return render_template('register_houdiniheist.html')
 
-msg=None
-@app.route('/register_event/<event>', methods=['GET', 'POST'])
-@login_required
-def register_event(event):
-    # Get the event collection
+@app.route('/neurodrain')
+def neurodrain():
+    return render_template('register_neurodrain.html')
+
+@app.route('/submitForm/neurodrain', methods=['POST'])
+def submit_neurodrain():
+    event = 'neurodrain'
     event_collection = db[event]
     msg = None
 
-    if request.method == 'POST':
+    try:
+        # form_data = request.form  # Use request.form to get form data
+        form_data = request.form.to_dict(flat=True)  # Convert to a flat dictionary
+        is_pccoe = True
+
+        if 'paymentScreenshot' in request.files:
+            payment_screenshot = request.files['paymentScreenshot']
+            if payment_screenshot.filename != '':
+                # Generate a unique filename (e.g., using timestamp)
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"payment_screenshot_{timestamp}.png"
+
+                # Read the file content as bytes
+                file_content = payment_screenshot.read()
+
+                # Use PyGithub to upload the file content to the repository
+                g = Github('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')
+                repo = g.get_repo('Prathmesh-Kolekar/Artimas24')
+
+                # Specify the file path and commit message
+                file_path = f'data/{filename}'
+                commit_message = 'Upload payment screenshot'
+
+                response = repo.create_file(file_path, commit_message, file_content, branch='main')
+                is_pccoe=False
+
+        current_date = datetime.datetime.today()
+
+
+        # Create a single document with a dictionary structure
         # Process event registration form data
         event_data = {
+            'date': current_date,
             'name': request.form.get('Name'),
             'college': request.form.get('College'),
             'department': request.form.get('Department'),
@@ -187,21 +224,135 @@ def register_event(event):
             'email': request.form.get('Email'),
             'contact': request.form.get('Contact'),
             'rules_accepted': 'Rules' in request.form,  # Check if 'Rules' checkbox is checked
-            'user_id': current_user.id  # Add the user ID for reference
+            # 'user_id': current_user.id,  # Add the user ID for reference
+            'is_pccoe': is_pccoe
         }
 
+
         # Insert the event data into the respective collection 
-        event_collection.insert_one(event_data)
+        # event_collection.insert_one(event_data)
 
         # Update the events array for the current user
-        current_user.events.append(event)
-        db.users.update_one({'_id': ObjectId(current_user.id)}, {'$set': {'events': current_user.events}})
+        db.users.update_one({'email': request.form.get('Email') }, {'$push': {'events': event}})
 
-        subject = 'Event Registration Confirmation'
-        template = render_template('registeration_confirmation.html',user_name = request.form.get('Name'),event=event)  # Adjust the path to your HTML template
-        send_email(subject,request.form.get('Email'), template )
-        msg = 'Registeration Succesful'
-    return render_template(f'register_{event}.html',messages=msg)
+        # subject = 'Event Registration Confirmation'
+        # template = render_template('registeration_confirmation.html',user_name = request.form.get('Name'),event=event)  # Adjust the path to your HTML template
+        # send_email(subject,request.form.get('Email'), template )
+
+        db[event].insert_one(event_data)
+
+        return jsonify({'success': True, 'message': 'Form data stored successfully.'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False, 'message': 'Error storing form data.'}), 500
+
+
+
+
+
+@app.route('/verifyEmail/<event>', methods=['GET'])
+def verify_person(event):
+    email_to_verify = request.args.get('email')
+    # event_collection = db[event]
+
+    user = db.users.find_one({'email': email_to_verify , 'verified' : True})
+
+    if user:
+        # print(user)
+        if event in user['events']:
+            return jsonify({'exists': True, 'error': 'Member already registered for the event.'})
+        else:
+            return jsonify({'exists': False, 'error': None})
+    else:
+        return jsonify({'exists': True, 'error': 'Member does not have an account yet'})
+    
+
+@app.route('/submitForm/houdiniheist', methods=['POST'])
+def submit_houdiniheist():
+    event = 'houdiniheist'
+    try:
+        # form_data = request.form  # Use request.form to get form data
+        form_data = request.form.to_dict(flat=True)  # Convert to a flat dictionary
+        is_pccoe = True
+
+        # print(form_data)
+        # Check if 'paymentScreenshot' is in request.files
+        if 'paymentScreenshot' in request.files:
+            payment_screenshot = request.files['paymentScreenshot']
+            if payment_screenshot.filename != '':
+                # Generate a unique filename (e.g., using timestamp)
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                filename = f"payment_screenshot_{timestamp}.png"
+
+                # Read the file content as bytes
+                file_content = payment_screenshot.read()
+
+                # Use PyGithub to upload the file content to the repository
+                g = Github('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')
+                repo = g.get_repo('Prathmesh-Kolekar/Artimas24')
+
+                # Specify the file path and commit message
+                file_path = f'data/{filename}'
+                commit_message = 'Upload payment screenshot'
+
+                # Print or log file content
+                # print(f"File Content: {file_content}")
+
+                # Print or log file path
+                # print(f"File Path: {file_path}")
+
+                # Create the file in the repository
+                response = repo.create_file(file_path, commit_message, file_content, branch='main')
+                is_pccoe=False
+
+                # Print or log GitHub API response
+                # print(f"GitHub API Response: {response}")
+
+        # Get the current date and time
+        current_date = datetime.datetime.today()
+
+        # Extract member data
+        members = []
+        # print(list(form_data))
+        for i in range(1, 5):  # Update range to 4 to include member 3
+            member_email = form_data.get(f'email{i}', {})
+            # print(member_data)
+            
+            if member_email != 'aimsa.pccoepune.org':
+                db.users.update_one({'email':member_email},{'$push':{'events':event}})
+                # print()
+                member_entry = {
+                'name': '',
+                'email': '',
+                'college': '',
+                'rollNo': '',
+                }
+            else:
+                member_entry = {
+                    'name': form_data.get(f'name{i}', ''),
+                    'email': form_data.get(f'email{i}', ''),
+                    'college': form_data.get(f'college{i}', ''),
+                    'rollNo': form_data.get(f'rollNo{i}', ''),
+                }
+            members.append(member_entry)
+
+        # Create a single document with a dictionary structure
+        form_entry = {
+            'date': current_date,
+            'members': members,
+            'is_pccoe':is_pccoe
+        }
+
+        # print(form_entry)
+
+        db[event].insert_one(form_entry)
+
+        return jsonify({'success': True, 'message': 'Form data stored successfully.'}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False, 'message': 'Error storing form data.'}), 500
+
+    
 
 @app.route('/profile')
 @login_required
@@ -212,6 +363,11 @@ def profile():
 @login_required
 def temp_dash():
     return render_template('temp_dash.html', user=current_user)
+
+@app.route('/temp_team')
+# @login_required
+def temp_team():
+    return render_template('team_registeration.html', user=current_user)
 
 if __name__ == '__main__':
     app.run(debug=True)

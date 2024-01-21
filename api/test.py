@@ -1,37 +1,10 @@
-from flask import Flask, render_template, request, flash
-from flask_mail import Mail, Message
+from github import Github
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False  # Use either TLS or SSL, not both
-app.config['MAIL_USERNAME'] = 'kolekarp04082003@gmail.com'
-app.config['MAIL_PASSWORD'] = 'xuux kbue owpp gfxv'  # Generate an App Password for your Gmail account
-app.config['MAIL_DEFAULT_SENDER'] = 'kolekarp04082003@gmail.com'
+g = Github('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')
 
-mail = Mail(app)
+repo = g.get_repo('Prathmesh-Kolekar/Artimas24')
 
-@app.route('/', methods=['GET', 'POST'])
-def registration():
-    if request.method == 'POST':
-        email = request.form['email']
-        name = request.form['name']
-        age = request.form['age']
+with open(r'C:\Users\Prathmesh\Downloads\068a13d9-5f81-4cdc-9270-311def6046bb.jpg', 'rb') as file:
+    data = file.read()
 
-        send_registration_email(email, name, age)
-
-        flash('Registration email sent successfully!', 'success')
-
-    return render_template('index.html')
-
-def send_registration_email(email, name, age):
-    subject = 'Registration Confirmation'
-    body = f'Thank you for registering, {name}! Your registration details:\n\nEmail: {email}\nName: {name}\nAge: {age}'
-
-    message = Message(subject, recipients=[email], body=body)
-    mail.send(message)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+repo.create_file('data/temp.jpg', 'upload csv', data, branch='main')

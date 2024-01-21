@@ -155,12 +155,13 @@ h1:first-line {
 
 .main {
     margin-top: 2%;
-    font-size: 28px;
+    font-size: 1em;
     width: 90%;
     display: flex;
     z-index: 40;
     align-items: center;
     justify-content: center;
+    max-width: 800px;
 }
 
 .main h2 {
@@ -182,7 +183,7 @@ h1:first-line {
 
 .main .card table {
     border: none;
-    font-size: 16px;
+    font-size: min(18px,3vw);
     height: 270px;
     width: 80%;
 }
@@ -197,34 +198,38 @@ h1 {
   text-align: center;
   text-shadow: 0 0 3px rgb(89, 200, 255);
 }
-/* td{
-  
-} */
+
+li{
+    list-style: none;
+}
+
     </style>
 </head>
 <body>
- <div><h1>PROFILE</h1></div>
+   <center> <div><h1>PROFILE</h1></div></center>
    
 <div id="space">
+    <!-- <h1></h1> -->
 
+    
     <div class="main">  
         <div class="card">
             <div class="card-body">
-                <table style="display: flex; flex-wrap: wrap;">
+                <table>
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td>:</td>
+                            <td>:   </td>
                             <td>{{ user.name }}</td>
                         </tr>
                         <tr>
                             <td>Email</td>
-                            <td>:</td>
+                            <td>:   </td>
                             <td>{{ user.email }}</td>
                         </tr>
                         <tr>
                             <td>College</td>
-                            <td>:</td>
+                            <td>:   </td>
                             <td>{{ user.college }}</td>
                         </tr>
                         <tr>
@@ -240,7 +245,7 @@ h1 {
             </div>
         </div>
     </div>
- <!-- </center> -->
+
     
   <div class="stars"></div>
   <div class="stars"></div>

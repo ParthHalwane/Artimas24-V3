@@ -138,7 +138,7 @@
     }
 
     .blog-slider {
-        /* width: 95%; */
+        width: 80%;
         max-width: 800px;
         background: rgba(255, 255, 255, 0.264); /* Semi-transparent white background */
         box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
@@ -180,7 +180,7 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        width: 50%;
+        width: 45%;
         min-width: 300px;
     }
 
@@ -208,7 +208,9 @@
     pointer-events: none;
     display: none;
     position: absolute;
-    top: 60px;
+    top: 20vh;
+    justify-content: center;
+    /* display: flex; */
     opacity: 0;  /* Initial opacity is set to 0 */
     animation: fadeIn 1s ease-in-out forwards;  /* Animation name, duration, timing function, and fill mode */
     }
@@ -249,6 +251,45 @@
     display: none;
     }
 
+
+    /* -------------------------------------------------------- */
+    .tutorial-container {
+      padding: 20px;
+      background-color: #43384da5;
+      border-radius: 8px;
+      transition: background-color 0.5s;
+      max-width: 600px;
+      width: 80%;
+      min-width: 300px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+      justify-content: center;
+      position: absolute;
+      z-index: 150;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .step {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .active {
+      display: block;
+      opacity: 1;
+    }
+
+    h2, p {
+      margin: 0;
+      color: #fff; /* Text color */
+    }
+
+    /* ------------------------------------------------------------------------------------- */
+
 </style>
 
 <body>
@@ -261,9 +302,22 @@
         <div class="profile-circle" onclick="toggleProfileOptions()">
           <i class="fas fa-user"></i>
           <div class="profile-options" id="profileOptions">
-            <a href="{{ url_for('profile') }}">Profile</a>
-            <a href="#">Logout</a>
+            <a href="{{url_for('profile')}}">Profile</a>
+            <a href="{{url_for('logout')}}">Logout</a>
           </div>
+        </div>
+    </div>
+
+    <div class="tutorial-container">
+        <div id="step-1" class="step active">
+          <h2>Step 1: Explore</h2>
+          <p>Zoom-in to explore the Universe.</p>
+        </div>
+    
+        <div id="step-2" class="step">
+          <h2>Step 2: Travel</h2>
+          <p>Use the Toggles to navigate through different Universes</p>
+          <!-- <button class="temp-button" onclick="completeTutorial()">Complete Tutorial</button> -->
         </div>
     </div>
 
@@ -275,6 +329,10 @@
         <div class="globe-label" id="globeLabel1" style="display: block;">Event 1</div>
         <div class="globe-label" id="globeLabel2">Event 2</div>
         <div class="globe-label" id="globeLabel3">Event 3</div>
+        <div class="globe-label" id="globeLabel4">Event 4</div>
+        <div class="globe-label" id="globeLabel5">Event 5</div>
+        <div class="globe-label" id="globeLabel6">Event 6</div>
+
         <div id="posterDiv" style="display: none; position: absolute;">
             <div class="blog-slider">
 
@@ -304,10 +362,14 @@
         let p = 0;
         let posterDivVisible = false; // Variable to track visibility
 
-        let globeNames = ["Globe 1", "Globe 2"];
+        let globeNames = ["Globe 1", "Globe 2",'Globe 3' , 'Globe 4' , 'Globe 5' , 'Globe 6'];
 
 
         let posters = [
+            "https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1535759872/kuldar-kalvik-799168-unsplash.webp",
+            "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1535759872/kuldar-kalvik-799168-unsplash.webp",
+            "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             "https://res.cloudinary.com/muhammederdem/image/upload/q_60/v1535759872/kuldar-kalvik-799168-unsplash.webp",
             "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             // Add more poster URLs as needed
@@ -315,11 +377,19 @@
 
         let postTitles = [
             "Lorem Ipsum Dolor",
+            "gsjhhj sfhfhh",
+            "Lorem Ipsum Dolor",
+            "gsjhhj sfhfhh",
+            "Lorem Ipsum Dolor",
             "gsjhhj sfhfhh"
             // Add more titles as needed
         ];
 
         let postDates = [
+            "26 December 2019",
+            "26 December 2019",
+            "26 December 2019",
+            "26 December 2019",
             "26 December 2019",
             "26 December 2019"
 
@@ -328,12 +398,21 @@
 
         let postContents = [
             "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae voluptate repellendus magni illo ea animi?",
+            'jgsd jkshfahkf jdsfhkurwiefwfs',
+            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae voluptate repellendus magni illo ea animi?",
+            'jgsd jkshfahkf jdsfhkurwiefwfs',
+            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae voluptate repellendus magni illo ea animi?",
             'jgsd jkshfahkf jdsfhkurwiefwfs'
         ];
 
         let postLinks = [
             "#",
+            '#',
+            '#',
+            '#',
+            '#',
             '#'
+
             // Add more links as needed
         ];
 
@@ -342,20 +421,40 @@
         let textureSphereBg = [];
         textureSphereBg.push(loader.load('https://i.ibb.co/4gHcRZD/bg3-je3ddz.jpg'));
         textureSphereBg.push(loader.load('https://i.ibb.co/hcN2qXk/star-nc8wkw.jpg'));
+        textureSphereBg.push(loader.load('https://i.ibb.co/4gHcRZD/bg3-je3ddz.jpg'));
+        textureSphereBg.push(loader.load('https://i.ibb.co/hcN2qXk/star-nc8wkw.jpg'));
+        textureSphereBg.push(loader.load('https://i.ibb.co/4gHcRZD/bg3-je3ddz.jpg'));
+        textureSphereBg.push(loader.load('https://i.ibb.co/hcN2qXk/star-nc8wkw.jpg'));
 
         let textureStar = [];
+        textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
+        textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
+        textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
+        textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
         textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
         textureStar.push(loader.load("https://i.ibb.co/ZKsdYSz/p1-g3zb2a.png"));
 
         let texture1 = [];
         texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
         texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
+        texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
+        texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
+        texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
+        texture1.push(loader.load("https://i.ibb.co/F8by6wW/p2-b3gnym.png"));
 
         let texture2 = [];
         texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
         texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
+        texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
+        texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
+        texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
+        texture2.push(loader.load("https://i.ibb.co/yYS2yx5/p3-ttfn70.png"));
 
         let texture4 = [];
+        texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
+        texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
+        texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
+        texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
         texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
         texture4.push(loader.load("https://i.ibb.co/yWfKkHh/p4-avirap.png"));
 
@@ -483,6 +582,10 @@
         }
 
         function toggleTextures(direction) {
+            document.querySelector('.tutorial-container').style.display = 'none';
+            if (localStorage.getItem('tutorialCompleted') === 'true') {
+                document.querySelector('.tutorial-container').style.display = 'none';
+            }
 
             scene.children.forEach((child) => {
                 if (child instanceof THREE.Mesh || child instanceof THREE.Points) {
@@ -571,7 +674,7 @@
             if (newVisibility !== posterDivVisible) {
                 posterDivVisible = newVisibility;
                 const posterDiv = document.getElementById('posterDiv');
-                posterDiv.style.display = posterDivVisible ? 'block' : 'none';
+                posterDiv.style.display = posterDivVisible ? 'flex' : 'none';
             }
 
             controls.update();
@@ -627,6 +730,52 @@
             });
         }
 
+        let currentStep = 1;
+
+    document.querySelector('.tutorial-container').style.display = 'flex';
+
+    // Check if the tutorial has been completed
+
+    if (localStorage.getItem('tutorialCompleted') === 'true') {
+        // document.querySelector('.tutorial-container').style.display = 'none';
+    }
+
+    function proceedToNextStep() {
+      const currentStepElement = document.getElementById(`step-${currentStep}`);
+      currentStepElement.style.opacity = 0;
+
+      setTimeout(() => {
+        currentStepElement.classList.remove('active');
+        currentStep += 1;
+
+        const nextStepElement = document.getElementById(`step-${currentStep}`);
+        if (nextStepElement) {
+          nextStepElement.classList.add('active');
+          setTimeout(() => {
+            nextStepElement.style.opacity = 1;
+          }, 100);
+        } else {
+          completeTutorial();
+        }
+      }, 500); // Delay for the fade-out animation
+    }
+
+    function completeTutorial() {
+      alert('Congratulations! You have completed the tutorial.');
+      localStorage.setItem('tutorialCompleted', 'true');
+      document.querySelector('.tutorial-container').style.display = 'none';
+      // You can add additional actions here if needed
+    }
+
+    // Simulating mouse wheel interaction for changing the first step
+    function wheelHandler(e) {
+      if (currentStep === 1 && e.deltaY < -7) {
+        proceedToNextStep();
+        document.removeEventListener('wheel', wheelHandler);
+      }
+    }
+
+    document.addEventListener('wheel', wheelHandler);
     </script>
 </body>
 </html>

@@ -31,4 +31,6 @@ body {
 }
 .login-wrap{
 	min-height:800px;
+    margin-top: 20px;
+    background-color: rgba(73, 102, 127, 0.536);
 }
